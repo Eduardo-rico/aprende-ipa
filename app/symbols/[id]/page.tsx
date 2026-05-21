@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import SYMBOLS, { getSymbolById } from '@/lib/data/symbols'
+import SYMBOLS, { getSymbolById, langToSpeech } from '@/lib/data/symbols'
 import { AudioButton } from '@/components/AudioButton'
 import { ArticulationBadge } from '@/components/ArticulationBadge'
 import { Badge } from '@/components/ui/badge'
@@ -61,10 +61,21 @@ export default async function SymbolDetailPage({ params }: { params: Promise<{ i
               key={ex.word + ex.lang}
               className="flex items-center gap-3 rounded-xl bg-card border border-border/40 px-4 py-3"
             >
-              <AudioButton src={`/audio/${ex.audio}`} size="sm" label={`Escuchar ${ex.word}`} />
-              <span className="font-semibold text-foreground">{ex.word}</span>
-              <span className="font-mono text-sm text-muted-foreground">[{ex.ipa}]</span>
-              <span className="ml-auto text-xs text-muted-foreground/60 shrink-0">{ex.langLabel}</span>
+              <AudioButton
+                src={`/audio/${ex.audio ?? ''}`}
+                size="sm"
+                label={`Escuchar ${ex.word}`}
+                word={ex.word}
+                speechLang={langToSpeech(ex.lang)}
+              />
+              <div className="flex-1 min-w-0">
+                <span className="font-semibold text-foreground">{ex.word}</span>
+                {ex.translation && (
+                  <span className="ml-2 text-sm text-amber-400/80 italic">"{ex.translation}"</span>
+                )}
+                <span className="ml-2 font-mono text-sm text-muted-foreground">[{ex.ipa}]</span>
+              </div>
+              <span className="text-xs text-muted-foreground/60 shrink-0">{ex.langLabel}</span>
             </div>
           ))}
         </div>

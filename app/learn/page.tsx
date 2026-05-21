@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { AudioButton } from '@/components/AudioButton'
 import { ArticulationBadge } from '@/components/ArticulationBadge'
-import SYMBOLS, { getSymbolById } from '@/lib/data/symbols'
+import SYMBOLS, { getSymbolById, langToSpeech } from '@/lib/data/symbols'
 import { getTodayQueue, submitReview, updateStreak } from '@/lib/db/repository'
 import { QUALITY_LABELS } from '@/lib/srs/sm2'
 import type { ReviewQuality } from '@/lib/srs/sm2'
@@ -193,10 +193,20 @@ export default function LearnPage() {
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Ejemplos</p>
               {symbol.examples.map((ex) => (
                 <div key={ex.word + ex.lang} className="flex items-center gap-2.5 text-sm">
-                  <AudioButton src={`/audio/${ex.audio}`} size="sm" />
+                  <AudioButton
+                    src={`/audio/${ex.audio ?? ''}`}
+                    size="sm"
+                    word={ex.word}
+                    speechLang={langToSpeech(ex.lang)}
+                  />
                   <span className="font-medium text-foreground">{ex.word}</span>
                   <span className="font-mono text-xs text-muted-foreground">[{ex.ipa}]</span>
-                  <span className="ml-auto text-xs text-muted-foreground/50 shrink-0">{ex.langLabel}</span>
+                  <div className="ml-auto flex flex-col items-end shrink-0">
+                    {ex.translation && (
+                      <span className="text-xs text-amber-400/80 italic">"{ex.translation}"</span>
+                    )}
+                    <span className="text-xs text-muted-foreground/50">{ex.langLabel}</span>
+                  </div>
                 </div>
               ))}
             </div>
